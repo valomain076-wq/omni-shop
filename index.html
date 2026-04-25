@@ -2,183 +2,168 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <title>OMNI C4 | GHOST PROTOCOL V11</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OMNI C4 - PREMIUM SİBER MARKET</title>
     <style>
-        :root { --neon-green: #00ff00; --neon-red: #ff3131; --neon-blue: #00e5ff; --neon-gold: #ffea00; --active-color: var(--neon-green); }
-        body, html { margin: 0; padding: 0; background: black; color: var(--active-color); font-family: 'Courier New', monospace; overflow: hidden; height: 100vh; }
-        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
-
-        header { background: rgba(0,0,0,0.95); border-bottom: 2px solid var(--active-color); padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative; }
+        :root { --neon: #00FF41; --dark: #050505; }
+        body { background: black; color: var(--neon); font-family: 'Courier New', monospace; margin: 0; padding-bottom: 150px; overflow-x: hidden; }
+        #matrix-bg { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+        .container { width: 90%; max-width: 1100px; margin: auto; text-align: center; }
         
-        .main-container { display: flex; height: calc(100vh - 150px); z-index: 10; position: relative; }
-
-        /* Paneller */
-        .sidebar { background: rgba(0,0,0,0.94); border-right: 1px solid #222; padding: 15px; display: flex; flex-direction: column; overflow-y: auto; }
-        .sidebar-left { width: 18%; }
-        .content-center { flex: 1; padding: 15px; overflow-y: auto; scrollbar-width: thin; }
-        .sidebar-right { width: 22%; border-left: 1px solid #222; }
-
-        /* Market */
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
-        .service-card { background: rgba(10,10,10,0.9); border: 1px solid #333; padding: 12px; border-radius: 2px; transition: 0.3s; }
-        .service-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); }
-
-        /* Güven Mührü */
-        .trust-seal { position: absolute; top: -10px; right: 10px; background: #000; border: 1px solid var(--neon-gold); color: var(--neon-gold); font-size: 8px; padding: 2px 5px; transform: rotate(5deg); }
-
-        /* VIP Modu Animasyonu */
-        .vip-active { color: var(--neon-red) !important; border-color: var(--neon-red) !important; }
-
-        .btn-action { background: var(--active-color); color: black; border: none; padding: 10px; width: 100%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 11px; margin-top: 5px; }
+        .header { padding: 30px 0; border-bottom: 2px solid var(--neon); text-shadow: 0 0 10px var(--neon); }
         
-        /* Canlı Destek Işığı */
-        .online-dot { width: 8px; height: 8px; background: #0f0; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #0f0; animation: pulse 1.5s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        /* Ürünler */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 20px; }
+        .card { background: rgba(0, 0, 0, 0.9); border: 1px solid var(--neon); padding: 15px; transition: 0.3s; position: relative; }
+        .card:hover { box-shadow: 0 0 20px var(--neon); }
+        .price { font-size: 1.3rem; color: white; display: block; margin: 10px 0; }
+        .add-btn { background: var(--neon); color: black; border: none; padding: 10px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Courier New'; }
 
-        .disclaimer { position: fixed; bottom: 40px; width: 100%; background: #100; color: #600; font-size: 9px; text-align: center; padding: 5px; border-top: 1px solid #300; }
-        #boot-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        /* Yorumlar */
+        .reviews { margin-top: 50px; text-align: left; background: rgba(10, 10, 10, 0.8); padding: 20px; border: 1px dashed var(--neon); }
+        .review-item { margin-bottom: 15px; border-bottom: 1px solid #222; padding-bottom: 5px; }
+        .review-user { color: yellow; font-weight: bold; }
+
+        /* Süzülen Kuponlar */
+        .coupon-gift { position: fixed; color: yellow; font-weight: bold; z-index: 99; animation: fall linear forwards; }
+        @keyframes fall { from { transform: translateY(-50px); } to { transform: translateY(110vh); } }
+
+        /* Alt Panel */
+        .cart-panel { position: fixed; bottom: 0; left: 0; width: 100%; background: #0a0a0a; border-top: 2px solid var(--neon); padding: 20px; display: flex; flex-wrap: wrap; justify-content: space-around; align-items: center; z-index: 1000; }
+        .total-box { font-size: 1.5rem; color: white; text-shadow: 0 0 5px var(--neon); }
+        .checkout-btn { background: #28a745; color: white; padding: 15px 30px; border: none; cursor: pointer; font-weight: bold; font-size: 1.1rem; }
     </style>
 </head>
 <body>
 
-<div id="boot-overlay">
-    <h2 style="color:var(--neon-green)">OMNI C4 ENCRYPTION V11.0</h2>
-    <button class="btn-action" style="width: 200px;" onclick="boot()">SİSTEMİ AÇ</button>
-</div>
+<canvas id="matrix-bg"></canvas>
 
-<canvas id="matrix"></canvas>
-
-<header id="main-header">
-    <div><i class="fas fa-ghost"></i> OMNI GHOST PROTOCOL <span id="vip-status" style="margin-left:15px; font-size:10px; color:#555;">[NORMAL MODE]</span></div>
-    <div style="font-size: 14px;">BAKİYE: <span id="final-price">0</span> ₺</div>
-</header>
-
-<div class="main-container">
-    <div class="sidebar sidebar-left">
-        <div style="border:1px solid #333; padding:10px; font-size:10px; margin-bottom:15px;">
-            <div class="online-dot"></div> ADMIN: ONLINE<br>
-            <span style="color:#888;">Cevap Süresi: ~2 Dakika</span>
-        </div>
-        <div id="log-screen" style="flex-grow:1; font-size:9px; color:#0f0; overflow:hidden;"></div>
+<div class="container">
+    <div class="header">
+        <h1>OMNI C4 PREMIUM MARKET v5.0</h1>
+        <p>SİSTEME GİRİŞ YAPILDI... HOŞ GELDİN OPERATÖR.</p>
     </div>
 
-    <div class="content-center">
-        <div class="grid-layout" id="market-grid"></div>
-        
-        <div style="margin-top:20px; border-top:1px solid #222; padding-top:10px;">
-            <h5 style="color:var(--neon-gold);"><i class="fas fa-star"></i> SON MÜŞTERİ GERİ BİLDİRİMLERİ</h5>
-            <div id="comments" style="font-size:10px;">
-                <div style="margin-bottom:5px;">> <strong>Burdurlu_Reis:</strong> Panel v4 tam istediğim gibi, güvenilir esnaf.</div>
-            </div>
-        </div>
-    </div>
+    <div class="grid" id="product-grid"></div>
 
-    <div class="sidebar sidebar-right">
-        <h4 style="margin:0;"><i class="fas fa-box-open"></i> AKTİF SİPARİŞ</h4>
-        <div id="cart-list" style="font-size:10px; flex-grow:1; margin-top:10px;"></div>
-        
-        <div style="padding:10px; background:rgba(255,255,255,0.05); border:1px solid #333;">
-            <div style="font-size:16px; margin-bottom:10px;">TOPLAM: <span id="total-txt">0</span> ₺</div>
-            <button class="btn-action" style="background:var(--neon-gold);" onclick="checkout()">ÖDEME ADIMINA GEÇ</button>
-        </div>
-        
-        <div style="margin-top:20px; text-align:center;">
-            <div class="trust-seal">VERIFIED BY OMNI_C4</div>
-            <a href="https://wa.me/905515514562" class="btn-action" style="background:#25d366; color:#fff;"><i class="fab fa-whatsapp"></i> WHATSAPP YARDIM</a>
-        </div>
+    <div class="reviews">
+        <h3>MÜŞTERİ GERİ BİLDİRİMLERİ [LOGS]</h3>
+        <div class="review-item"><span class="review-user">DarkShadow_01:</span> V4 Panel aldım, saniyeler içinde teslim edildi. Güvenilir.</div>
+        <div class="review-item"><span class="review-user">Siber_Kurt:</span> SMS Boomer efsane çalışıyor, numara doğrulamaları anında geçiyor.</div>
+        <div class="review-item"><span class="review-user">Burdur_Hacker:</span> Destek ekibi çok hızlı, her soruma cevap aldım. Teşekkürler OMNI.</div>
+        <div class="review-item"><span class="review-user">Root_User:</span> Fiyatlar piyasaya göre çok uygun, araçlar güncel.</div>
     </div>
 </div>
 
-<div class="disclaimer">YASAL UYARI: TÜM İÇERİKLER EĞİTİM VE TEST AMAÇLIDIR. KÖTÜYE KULLANIMDAN KULLANICI SORUMLUDUR.</div>
-
-<div style="position:fixed; bottom:0; width:100%; background:#000; border-top:1px solid #222; font-size:10px; padding:3px; z-index:300;">
-    <marquee>+++ BURDUR SİBER ÜSSÜ GÜNCELLENDİ +++ KESİNTİSİZ DESTEK AKTİF +++ VIP MODU İÇİN 'V' TUŞUNA BASIN +++</marquee>
+<div class="cart-panel">
+    <div class="total-box">TOPLAM: ₺<span id="total-price">0</span></div>
+    <div>
+        <input type="text" id="coupon-field" placeholder="KOD GİR" style="background:black; color:var(--neon); border:1px solid var(--neon); padding:5px;">
+    </div>
+    <button class="checkout-btn" onclick="processOrder()">SİPARİŞİ TAMAMLA</button>
 </div>
 
 <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function beep(f, d) {
-        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-        o.frequency.value = f; g.gain.value = 0.02; o.connect(g); g.connect(audioCtx.destination);
-        o.start(); setTimeout(() => o.stop(), d);
+    function playBeep(freq, dur) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.value = freq; osc.start();
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+        osc.stop(audioCtx.currentTime + dur);
     }
 
-    function boot() { document.getElementById('boot-overlay').style.display='none'; beep(600,100); }
-
-    // MATRIX
-    const canvas = document.getElementById('matrix'); const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-    const rain = Array(Math.floor(canvas.width/16)).fill(1);
-    function draw() {
-        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "#0F0"; ctx.font = "16px monospace";
-        rain.forEach((y, i) => {
-            ctx.fillText(String.fromCharCode(0x30A0 + Math.random()*96), i*16, y*16);
-            if(y*16 > canvas.height && Math.random() > 0.975) rain[i] = 0; rain[i]++;
-        });
-    }
-    setInterval(draw, 35);
-
-    // 20 ÜRÜN
     const products = [
-        { n: "Kali Linux Pro", p: 500, t: "Eğitim" }, { n: "IP İzleme Modülü", p: 400, t: "Hack" },
-        { n: "Ultimate Panel v4", p: 850, t: "Panel" }, { n: "Termux Master", p: 300, t: "Eğitim" },
-        { n: "WiFi Analiz Seti", p: 350, t: "Hack" }, { n: "Phishing Panel VIP", p: 600, t: "Hack" },
-        { n: "eDEX-UI Config", p: 150, t: "Panel" }, { n: "Python for Cyber", p: 450, t: "Eğitim" },
-        { n: "Instagram Analiz", p: 300, t: "Hack" }, { n: "Port Scanner Ultra", p: 200, t: "Hack" },
-        { n: "Botnet Control", p: 1200, t: "Panel" }, { n: "SQL Injection Pro", p: 550, t: "Eğitim" },
-        { n: "Brute Force VIP", p: 300, t: "Hack" }, { n: "SMS Bomber Pro", p: 100, t: "Panel" },
-        { n: "FUD Payload Gen.", p: 700, t: "Hack" }, { n: "Remote Keylogger", p: 400, t: "Panel" },
-        { n: "Social Eng. V2", p: 450, t: "Eğitim" }, { n: "Deep Web Access", p: 250, t: "Eğitim" },
-        { n: "Crypto Privacy", p: 500, t: "Eğitim" }, { n: "Zero-Day Exploit", p: 1500, t: "Hack" }
+        {id:1, name:"V4 PANEL ACCESS", desc:"Full yetki sızma paneli", price:1500},
+        {id:2, name:"SMS BOOMER PRO", desc:"Saniyede 500 SMS hızı", price:400},
+        {id:3, name:"INSTA RECOVERY", desc:"Hesap kurtarma modülü", price:850},
+        {id:4, name:"SQL INJECTION BOT", desc:"Otomatik açık tarayıcı", price:1200},
+        {id:5, name:"KALI TERMUX SET", desc:"Özel eğitim paketi", price:600},
+        {id:6, name:"DDoS HUB", desc:"Layer 7 saldırı gücü", price:2500},
+        {id:7, name:"PHISHING MASTER", desc:"Sahte panel scriptleri", price:700},
+        {id:8, name:"WIFI CRACKER", desc:"WPA3 destekli kırma", price:1800},
+        {id:9, name:"RAT BUILDER", desc:"FUD bağlantı oluşturucu", price:3000},
+        {id:10, name:"IP TRACKER PRO", desc:"Anlık konum tespiti", price:650},
+        {id:11, name:"VPN BYPASS", desc:"Engelli erişim modülü", price:400},
+        {id:12, name:"BOTNET ADMIN", desc:"Zombi ağ yönetimi", price:4500},
+        {id:13, name:"LOG CLEANER", desc:"İz bırakmayan temizleyici", price:900},
+        {id:14, name:"SHELL UPLOADER", desc:"Hedef sunucu erişimi", price:1300},
+        {id:15, name:"CRYPTER FUD", desc:"Dosya gizleme aracı", price:1100},
+        {id:16, name:"DISCORD TOKEN", desc:"Gelişmiş grabber kiti", price:500},
+        {id:17, name:"CC CHECKER", desc:"Hızlı doğrulama sistemi", price:800},
+        {id:18, name:"DATA SCRAPER", desc:"Veri toplama botu", price:750},
+        {id:19, name:"MAC SPOOFER", desc:"Donanım kimlik gizleme", price:350},
+        {id:20, name:"FIREWALL KILLER", desc:"Duvar aşma yazılımı", price:2200}
     ];
 
-    const grid = document.getElementById('market-grid');
-    products.forEach(p => {
-        grid.innerHTML += `<div class="service-card">
-            <span style="font-size:9px; color:var(--neon-blue);">[${p.t}]</span>
-            <h4 style="margin:5px 0; font-size:12px;">${p.n}</h4>
-            <div style="font-size:14px; color:white; margin-bottom:10px;">${p.p} ₺</div>
-            <button class="btn-action" onclick="add('${p.n}', ${p.p})">EKLE</button>
-        </div>`;
-    });
+    let cart = [];
+    let totalPrice = 0;
 
-    let cart = []; let total = 0;
-    function add(n, p) {
-        cart.push({n, p}); total += p;
-        beep(800, 50); updateUI();
-    }
-    function updateUI() {
-        document.getElementById('cart-list').innerHTML = cart.map(i => `<div>> ${i.n}</div>`).join('');
-        document.getElementById('final-price').innerText = total;
-        document.getElementById('total-txt').innerText = total;
+    function displayProducts() {
+        document.getElementById('product-grid').innerHTML = products.map(p => `
+            <div class="card">
+                <h3>${p.name}</h3>
+                <p>${p.desc}</p>
+                <span class="price">₺${p.price}</span>
+                <button class="add-btn" onclick="addToCart('${p.name}', ${p.price})">SEPATA EKLE</button>
+            </div>
+        `).join('');
     }
 
-    // VIP MODU (Easter Egg)
-    document.addEventListener('keydown', (e) => {
-        if(e.key.toLowerCase() === 'v') {
-            document.body.style.setProperty('--active-color', 'var(--neon-red)');
-            document.getElementById('vip-status').innerText = "[VIP RED MODE ACTIVE]";
-            document.getElementById('vip-status').style.color = "red";
-            beep(200, 500);
-        }
-    });
-
-    function checkout() {
-        if(cart.length === 0) return;
-        let msg = "--- OMNI C4 SİPARİŞ ---\n";
-        cart.forEach(i => msg += "- " + i.n + "\n");
-        msg += "TOPLAM: " + total + " ₺";
-        window.location.href = "https://wa.me/905515514562?text=" + encodeURIComponent(msg);
+    function addToCart(name, price) {
+        playBeep(800, 0.1);
+        cart.push(name);
+        totalPrice += price;
+        document.getElementById('total-price').innerText = totalPrice;
     }
 
-    setInterval(() => {
-        const logs = ["> Bağlantı Stabil", "> Veri Şifreleniyor", "> Burdur Node Aktif", "> Proxy Değişti"];
-        const screen = document.getElementById('log-screen');
-        const d = document.createElement('div'); d.innerText = logs[Math.floor(Math.random()*logs.length)];
-        screen.prepend(d); if(screen.children.length > 20) screen.removeChild(screen.lastChild);
-    }, 2000);
+    function processOrder() {
+        if(cart.length === 0) return alert("Sepetiniz boş!");
+        
+        playBeep(1000, 0.5);
+        alert("ZORUNLU ADIM: Sipariş verebilmek için önce Telegram kanalımıza katılmalısınız!");
+        
+        // Telegram kanal linkini buraya koy (Örnek: t.me/kanalin)
+        window.open("https://t.me/omnic4_duyuru", "_blank");
+
+        setTimeout(() => {
+            if(confirm("Telegram kanalına katıldınız mı? Onay verirseniz WhatsApp'a yönlendirileceksiniz.")) {
+                let msg = `Selam OMNI C4, Siparişim:%0A%0A${cart.join("%0A")}%0A%0AToplam Tutar: ₺${totalPrice}`;
+                window.open(`https://wa.me/905515114562?text=${msg}`, "_blank");
+            }
+        }, 2000);
+    }
+
+    // Kupon Yağmuru
+    function spawnCoupon() {
+        const coupon = document.createElement('div');
+        coupon.className = 'coupon-gift';
+        coupon.innerText = `🎁 KOD: OMNI${Math.floor(Math.random()*10+5)}`;
+        coupon.style.left = Math.random() * 80 + 10 + '%';
+        const duration = Math.random() * 3 + 4;
+        coupon.style.animationDuration = duration + 's';
+        document.body.appendChild(coupon);
+        setTimeout(() => coupon.remove(), duration * 1000);
+    }
+    setInterval(spawnCoupon, 6000);
+
+    // Matrix
+    const canvas = document.getElementById('matrix-bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const drops = Array(Math.floor(canvas.width/16)).fill(1);
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#00FF41"; ctx.font = "16px arial";
+        drops.forEach((y, i) => {
+            ctx.fillText(String.fromCharCode(Math.random()*128), i*16, y*16);
+            if(y*16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
+        });
+    }
+    setInterval(draw, 33);
+    displayProducts();
 </script>
 </body>
 </html>
