@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>OMNI C4 | GHOST PROTOCOL V11</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --neon-green: #00ff00; --neon-red: #ff3131; --neon-blue: #00e5ff; --neon-gold: #ffea00; --active-color: var(--neon-green); }
+        body, html { margin: 0; padding: 0; background: black; color: var(--active-color); font-family: 'Courier New', monospace; overflow: hidden; height: 100vh; }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.15; }
+
+        header { background: rgba(0,0,0,0.95); border-bottom: 2px solid var(--active-color); padding: 10px 25px; display: flex; justify-content: space-between; align-items: center; z-index: 100; position: relative; }
+        
+        .main-container { display: flex; height: calc(100vh - 150px); z-index: 10; position: relative; }
+
+        /* Paneller */
+        .sidebar { background: rgba(0,0,0,0.94); border-right: 1px solid #222; padding: 15px; display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar-left { width: 18%; }
+        .content-center { flex: 1; padding: 15px; overflow-y: auto; scrollbar-width: thin; }
+        .sidebar-right { width: 22%; border-left: 1px solid #222; }
+
+        /* Market */
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; }
+        .service-card { background: rgba(10,10,10,0.9); border: 1px solid #333; padding: 12px; border-radius: 2px; transition: 0.3s; }
+        .service-card:hover { border-color: var(--neon-blue); box-shadow: 0 0 10px var(--neon-blue); }
+
+        /* Güven Mührü */
+        .trust-seal { position: absolute; top: -10px; right: 10px; background: #000; border: 1px solid var(--neon-gold); color: var(--neon-gold); font-size: 8px; padding: 2px 5px; transform: rotate(5deg); }
+
+        /* VIP Modu Animasyonu */
+        .vip-active { color: var(--neon-red) !important; border-color: var(--neon-red) !important; }
+
+        .btn-action { background: var(--active-color); color: black; border: none; padding: 10px; width: 100%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 11px; margin-top: 5px; }
+        
+        /* Canlı Destek Işığı */
+        .online-dot { width: 8px; height: 8px; background: #0f0; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #0f0; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .disclaimer { position: fixed; bottom: 40px; width: 100%; background: #100; color: #600; font-size: 9px; text-align: center; padding: 5px; border-top: 1px solid #300; }
+        #boot-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+<div id="boot-overlay">
+    <h2 style="color:var(--neon-green)">OMNI C4 ENCRYPTION V11.0</h2>
+    <button class="btn-action" style="width: 200px;" onclick="boot()">SİSTEMİ AÇ</button>
+</div>
+
+<canvas id="matrix"></canvas>
+
+<header id="main-header">
+    <div><i class="fas fa-ghost"></i> OMNI GHOST PROTOCOL <span id="vip-status" style="margin-left:15px; font-size:10px; color:#555;">[NORMAL MODE]</span></div>
+    <div style="font-size: 14px;">BAKİYE: <span id="final-price">0</span> ₺</div>
+</header>
+
+<div class="main-container">
+    <div class="sidebar sidebar-left">
+        <div style="border:1px solid #333; padding:10px; font-size:10px; margin-bottom:15px;">
+            <div class="online-dot"></div> ADMIN: ONLINE<br>
+            <span style="color:#888;">Cevap Süresi: ~2 Dakika</span>
+        </div>
+        <div id="log-screen" style="flex-grow:1; font-size:9px; color:#0f0; overflow:hidden;"></div>
+    </div>
+
+    <div class="content-center">
+        <div class="grid-layout" id="market-grid"></div>
+        
+        <div style="margin-top:20px; border-top:1px solid #222; padding-top:10px;">
+            <h5 style="color:var(--neon-gold);"><i class="fas fa-star"></i> SON MÜŞTERİ GERİ BİLDİRİMLERİ</h5>
+            <div id="comments" style="font-size:10px;">
+                <div style="margin-bottom:5px;">> <strong>Burdurlu_Reis:</strong> Panel v4 tam istediğim gibi, güvenilir esnaf.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar sidebar-right">
+        <h4 style="margin:0;"><i class="fas fa-box-open"></i> AKTİF SİPARİŞ</h4>
+        <div id="cart-list" style="font-size:10px; flex-grow:1; margin-top:10px;"></div>
+        
+        <div style="padding:10px; background:rgba(255,255,255,0.05); border:1px solid #333;">
+            <div style="font-size:16px; margin-bottom:10px;">TOPLAM: <span id="total-txt">0</span> ₺</div>
+            <button class="btn-action" style="background:var(--neon-gold);" onclick="checkout()">ÖDEME ADIMINA GEÇ</button>
+        </div>
+        
+        <div style="margin-top:20px; text-align:center;">
+            <div class="trust-seal">VERIFIED BY OMNI_C4</div>
+            <a href="https://wa.me/905515514562" class="btn-action" style="background:#25d366; color:#fff;"><i class="fab fa-whatsapp"></i> WHATSAPP YARDIM</a>
+        </div>
+    </div>
+</div>
+
+<div class="disclaimer">YASAL UYARI: TÜM İÇERİKLER EĞİTİM VE TEST AMAÇLIDIR. KÖTÜYE KULLANIMDAN KULLANICI SORUMLUDUR.</div>
+
+<div style="position:fixed; bottom:0; width:100%; background:#000; border-top:1px solid #222; font-size:10px; padding:3px; z-index:300;">
+    <marquee>+++ BURDUR SİBER ÜSSÜ GÜNCELLENDİ +++ KESİNTİSİZ DESTEK AKTİF +++ VIP MODU İÇİN 'V' TUŞUNA BASIN +++</marquee>
+</div>
+
+<script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function beep(f, d) {
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.frequency.value = f; g.gain.value = 0.02; o.connect(g); g.connect(audioCtx.destination);
+        o.start(); setTimeout(() => o.stop(), d);
+    }
+
+    function boot() { document.getElementById('boot-overlay').style.display='none'; beep(600,100); }
+
+    // MATRIX
+    const canvas = document.getElementById('matrix'); const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const rain = Array(Math.floor(canvas.width/16)).fill(1);
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#0F0"; ctx.font = "16px monospace";
+        rain.forEach((y, i) => {
+            ctx.fillText(String.fromCharCode(0x30A0 + Math.random()*96), i*16, y*16);
+            if(y*16 > canvas.height && Math.random() > 0.975) rain[i] = 0; rain[i]++;
+        });
+    }
+    setInterval(draw, 35);
+
+    // 20 ÜRÜN
+    const products = [
+        { n: "Kali Linux Pro", p: 500, t: "Eğitim" }, { n: "IP İzleme Modülü", p: 400, t: "Hack" },
+        { n: "Ultimate Panel v4", p: 850, t: "Panel" }, { n: "Termux Master", p: 300, t: "Eğitim" },
+        { n: "WiFi Analiz Seti", p: 350, t: "Hack" }, { n: "Phishing Panel VIP", p: 600, t: "Hack" },
+        { n: "eDEX-UI Config", p: 150, t: "Panel" }, { n: "Python for Cyber", p: 450, t: "Eğitim" },
+        { n: "Instagram Analiz", p: 300, t: "Hack" }, { n: "Port Scanner Ultra", p: 200, t: "Hack" },
+        { n: "Botnet Control", p: 1200, t: "Panel" }, { n: "SQL Injection Pro", p: 550, t: "Eğitim" },
+        { n: "Brute Force VIP", p: 300, t: "Hack" }, { n: "SMS Bomber Pro", p: 100, t: "Panel" },
+        { n: "FUD Payload Gen.", p: 700, t: "Hack" }, { n: "Remote Keylogger", p: 400, t: "Panel" },
+        { n: "Social Eng. V2", p: 450, t: "Eğitim" }, { n: "Deep Web Access", p: 250, t: "Eğitim" },
+        { n: "Crypto Privacy", p: 500, t: "Eğitim" }, { n: "Zero-Day Exploit", p: 1500, t: "Hack" }
+    ];
+
+    const grid = document.getElementById('market-grid');
+    products.forEach(p => {
+        grid.innerHTML += `<div class="service-card">
+            <span style="font-size:9px; color:var(--neon-blue);">[${p.t}]</span>
+            <h4 style="margin:5px 0; font-size:12px;">${p.n}</h4>
+            <div style="font-size:14px; color:white; margin-bottom:10px;">${p.p} ₺</div>
+            <button class="btn-action" onclick="add('${p.n}', ${p.p})">EKLE</button>
+        </div>`;
+    });
+
+    let cart = []; let total = 0;
+    function add(n, p) {
+        cart.push({n, p}); total += p;
+        beep(800, 50); updateUI();
+    }
+    function updateUI() {
+        document.getElementById('cart-list').innerHTML = cart.map(i => `<div>> ${i.n}</div>`).join('');
+        document.getElementById('final-price').innerText = total;
+        document.getElementById('total-txt').innerText = total;
+    }
+
+    // VIP MODU (Easter Egg)
+    document.addEventListener('keydown', (e) => {
+        if(e.key.toLowerCase() === 'v') {
+            document.body.style.setProperty('--active-color', 'var(--neon-red)');
+            document.getElementById('vip-status').innerText = "[VIP RED MODE ACTIVE]";
+            document.getElementById('vip-status').style.color = "red";
+            beep(200, 500);
+        }
+    });
+
+    function checkout() {
+        if(cart.length === 0) return;
+        let msg = "--- OMNI C4 SİPARİŞ ---\n";
+        cart.forEach(i => msg += "- " + i.n + "\n");
+        msg += "TOPLAM: " + total + " ₺";
+        window.location.href = "https://wa.me/905515514562?text=" + encodeURIComponent(msg);
+    }
+
+    setInterval(() => {
+        const logs = ["> Bağlantı Stabil", "> Veri Şifreleniyor", "> Burdur Node Aktif", "> Proxy Değişti"];
+        const screen = document.getElementById('log-screen');
+        const d = document.createElement('div'); d.innerText = logs[Math.floor(Math.random()*logs.length)];
+        screen.prepend(d); if(screen.children.length > 20) screen.removeChild(screen.lastChild);
+    }, 2000);
+</script>
+</body>
+</html>
